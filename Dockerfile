@@ -1,4 +1,5 @@
-FROM docker.io/library/archlinux:base-devel
+ARG REGISTRY=docker.io/library
+FROM ${REGISTRY}/archlinux:base-devel
 RUN useradd -m paru && \
 	echo "paru ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/paru && \
 	pacman -Sy && \

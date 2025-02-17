@@ -30,6 +30,9 @@ jobs:
     - name: Build and push to GHCR
       uses: docker/build-push-action@v4
       with:
+        context: .
+        build-args: |
+          REGISTRY=ghcr.io/archlinux
         push: true
         tags: ghcr.io/${{ github.repository }}:latest
 
