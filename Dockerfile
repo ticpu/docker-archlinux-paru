@@ -10,16 +10,18 @@ ADD http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz /tmp/archli
 RUN mkdir -p /archlinuxarm && \
     tar -xzf /tmp/archlinuxarm.tar.gz -C /archlinuxarm
 
+# pacman -Qq lists only the installed ones, so a package missing from the
+# rootfs is skipped; pipefail would turn that skip into a failure.
 FROM scratch AS base-arm64
 COPY --from=arm64-downloader /archlinuxarm/ /
 RUN sed -i '/^\[options\]/a DisableSandbox' /etc/pacman.conf && \
     pacman-key --init && \
     pacman-key --populate archlinuxarm && \
-    pacman -Rdd --noconfirm linux-aarch64 linux-firmware mkinitcpio mkinitcpio-busybox 2>/dev/null || true && \
+    pacman -Qq linux-aarch64 linux-firmware mkinitcpio mkinitcpio-busybox | xargs -r pacman -Rdd --noconfirm && \
     pacman -Syu --noconfirm && \
     sed -i '/^\[options\]/a DisableSandbox' /etc/pacman.conf && \
     pacman -S --noconfirm base-devel sudo && \
-    pacman -Rns --noconfirm openssh dhcpcd netctl openresolv iproute2 iputils net-tools systemd-sysvcompat 2>/dev/null || true && \
+    pacman -Qq openssh dhcpcd netctl openresolv net-tools | xargs -r pacman -Rns --noconfirm && \
     pacman -Sc --noconfirm && \
     gpgconf --kill all && \
     rm -rf /etc/pacman.d/gnupg/S.*
@@ -28,8 +30,7 @@ FROM base-${TARGETARCH} AS base
 ARG TARGETARCH
 RUN useradd -m paru && \
 	echo "paru ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/paru && \
-	pacman -Sy && \
-	pacman -S git cargo --noconfirm && \
+	pacman -Syu --noconfirm git cargo && \
 	pacman -Sc --noconfirm && \
 	git config --system init.defaultBranch master
 USER paru:paru
