@@ -91,3 +91,28 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         repository: ${{ secrets.DOCKERHUB_USERNAME }}/archlinux-paru
         short-description: Arch Linux with the paru AUR helper, Rust and cargo pre-installed. amd64 and arm64, rebuilt weekly.
+
+  # Six-month retention, as the README promises. Runs only after a build
+  # succeeded, so a broken build never leaves a registry without a recent image.
+  cleanup:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: registry-cleanup
+    permissions:
+      packages: write
+
+    steps:
+    # Deletes a multi-arch image with its platform children and attestations,
+    # which a plain delete of untagged GHCR versions would orphan or break.
+    - name: Delete GHCR images older than six months
+      uses: dataaxiom/ghcr-cleanup-action@v1
+      with:
+        older-than: 6 months
+        delete-untagged: true
+        delete-tags: '^[0-9]{8}-[0-9]{6}$'
+        use-regex: true
+        exclude-tags: latest
+        validate: true
+        dry-run: true
