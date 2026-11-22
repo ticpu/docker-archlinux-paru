@@ -60,3 +60,22 @@ jobs:
           ghcr.io/${{ github.repository }}:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/archlinux-paru:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/paru:latest
+
+    # README.md is the Docker Hub description of both repositories.
+    - name: Update Docker Hub description of paru
+      if: github.event_name != 'pull_request'
+      uses: peter-evans/dockerhub-description@v5
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        repository: ${{ secrets.DOCKERHUB_USERNAME }}/paru
+        short-description: Arch Linux with the paru AUR helper pre-installed. amd64 and arm64, rebuilt weekly.
+
+    - name: Update Docker Hub description of archlinux-paru
+      if: github.event_name != 'pull_request'
+      uses: peter-evans/dockerhub-description@v5
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        repository: ${{ secrets.DOCKERHUB_USERNAME }}/archlinux-paru
+        short-description: Arch Linux with the paru AUR helper pre-installed. amd64 and arm64, rebuilt weekly.
