@@ -22,11 +22,12 @@ The image runs as root. makepkg refuses root, so run paru as the `paru` user, wh
 docker run --rm -it ticpu/paru sudo -u paru paru -S --noconfirm <aur-package>
 ```
 
-In a Containerfile:
+In a Containerfile, clean up in the same `RUN`, or the files stay in the layer. paru keeps its clones and build trees under `~/.cache/paru`, and `pacman -Scc --noconfirm` empties nothing, since `--noconfirm` answers its prompt with the default, No:
 
 ```Dockerfile
 FROM docker.io/ticpu/paru:latest
-RUN sudo -u paru paru -S --noconfirm <aur-package> && pacman -Scc --noconfirm
+RUN sudo -u paru paru -S --noconfirm <aur-package> && \
+    rm -rf /home/paru/.cache/paru /var/cache/pacman/pkg/*
 ```
 
 ## Source
