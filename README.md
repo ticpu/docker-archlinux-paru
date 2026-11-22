@@ -2,6 +2,7 @@
 
 An Arch Linux container image with [paru](https://github.com/Morganamilo/paru), the AUR helper, pre-installed, for building and installing AUR packages in CI or a throwaway container.
 
+- Rust toolchain included: rust, cargo, git and base-devel are installed, so the growing number of AUR packages written in Rust build without downloading a toolchain first.
 - Platforms: linux/amd64 (official archlinux:base-devel) and linux/arm64 (Arch Linux ARM).
 - Rebuilt every Tuesday from the current Arch base, and on every push to master.
 - Published as `ticpu/paru:latest` and `ticpu/archlinux-paru:latest` on Docker Hub, and `ghcr.io/ticpu/docker-archlinux-paru:latest`. All three are the same image.
