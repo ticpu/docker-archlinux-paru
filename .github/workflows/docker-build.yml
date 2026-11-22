@@ -116,3 +116,13 @@ jobs:
         exclude-tags: latest
         validate: true
         dry-run: true
+
+    - name: Checkout repository
+      uses: actions/checkout@v7
+
+    - name: Delete Docker Hub images older than six months
+      run: scripts/dockerhub-cleanup.sh archlinux-paru paru
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        DRY_RUN: 1
