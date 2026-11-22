@@ -46,6 +46,8 @@ jobs:
 
     # One build pushed to every registry, so they always carry the same image.
     # A pull request builds without pushing: :latest is what master built.
+    # Docker Hub search ranks an exact name match first, hence the paru name
+    # beside archlinux-paru, which keeps the existing pulls.
     - name: Build and push
       uses: docker/build-push-action@v7
       with:
@@ -57,3 +59,4 @@ jobs:
         tags: |
           ghcr.io/${{ github.repository }}:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/archlinux-paru:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/paru:latest
