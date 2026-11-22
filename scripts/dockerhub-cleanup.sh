@@ -16,10 +16,10 @@
 #
 # Usage: DOCKERHUB_USERNAME=... DOCKERHUB_TOKEN=... dockerhub-cleanup.sh repo...
 # DRY_RUN=1 prints every action without taking it. RETENTION is a GNU date
-# relative time, default "6 months".
+# relative time, default "180 days".
 set -euo pipefail
 
-cutoff=$(date -u -d "${RETENTION:-6 months} ago" +%Y%m%d-%H%M%S)
+cutoff=$(date -u -d "${RETENTION:-180 days} ago" +%Y%m%d-%H%M%S)
 accept='application/vnd.oci.image.index.v1+json,application/vnd.docker.distribution.manifest.list.v2+json,application/vnd.oci.image.manifest.v1+json,application/vnd.docker.distribution.manifest.v2+json'
 deleted=0
 

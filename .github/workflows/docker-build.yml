@@ -106,16 +106,17 @@ jobs:
     steps:
     # Deletes a multi-arch image with its platform children and attestations,
     # which a plain delete of untagged GHCR versions would orphan or break.
+    # Retention is in days in both steps: the action reads "6 months" as 180
+    # days, GNU date as calendar months.
     - name: Delete GHCR images older than six months
       uses: dataaxiom/ghcr-cleanup-action@v1
       with:
-        older-than: 6 months
+        older-than: 180 days
         delete-untagged: true
         delete-tags: '^[0-9]{8}-[0-9]{6}$'
         use-regex: true
         exclude-tags: latest
         validate: true
-        dry-run: true
 
     - name: Checkout repository
       uses: actions/checkout@v7
@@ -125,4 +126,4 @@ jobs:
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        DRY_RUN: 1
+        RETENTION: 180 days
