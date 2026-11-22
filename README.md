@@ -5,7 +5,14 @@ An Arch Linux container image with [paru](https://github.com/Morganamilo/paru), 
 - Rust toolchain included: rust, cargo, git and base-devel are installed, so the growing number of AUR packages written in Rust build without downloading a toolchain first.
 - Platforms: linux/amd64 (official archlinux:base-devel) and linux/arm64 (Arch Linux ARM).
 - Rebuilt every Tuesday from the current Arch base, and on every push to master.
-- Published as `ticpu/paru:latest` and `ticpu/archlinux-paru:latest` on Docker Hub, and `ghcr.io/ticpu/docker-archlinux-paru:latest`. All three are the same image.
+- Published as `ticpu/paru` and `ticpu/archlinux-paru` on Docker Hub, and `ghcr.io/ticpu/docker-archlinux-paru`. All three carry the same image.
+
+## Tags
+
+- `latest`: the most recent build.
+- `YYYYMMDD-HHMMSS`: each build, stamped with its UTC build time, for pinning a known-good image.
+
+Builds older than six months are deleted. Pin a recent build and move forward, rather than pinning one forever.
 
 ## Usage
 

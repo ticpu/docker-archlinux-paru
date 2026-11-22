@@ -44,10 +44,24 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # One build pushed to every registry, so they always carry the same image.
-    # A pull request builds without pushing: :latest is what master built.
     # Docker Hub search ranks an exact name match first, hence the paru name
     # beside archlinux-paru, which keeps the existing pulls.
+    # The timestamp tag is unique per run, so no build is left untagged, and
+    # retention can find old builds by tag.
+    - name: Image names and tags
+      id: meta
+      uses: docker/metadata-action@v6
+      with:
+        images: |
+          ghcr.io/${{ github.repository }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/archlinux-paru
+          ${{ secrets.DOCKERHUB_USERNAME }}/paru
+        tags: |
+          type=raw,value=latest
+          type=raw,value={{date 'YYYYMMDD-HHmmss'}}
+
+    # One build pushed to every registry, so they always carry the same image.
+    # A pull request builds without pushing: :latest is what master built.
     - name: Build and push
       uses: docker/build-push-action@v7
       with:
@@ -56,10 +70,8 @@ jobs:
         build-args: |
           REGISTRY=ghcr.io/archlinux
         push: ${{ github.event_name != 'pull_request' }}
-        tags: |
-          ghcr.io/${{ github.repository }}:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/archlinux-paru:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/paru:latest
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
 
     # README.md is the Docker Hub description of both repositories.
     - name: Update Docker Hub description of paru
